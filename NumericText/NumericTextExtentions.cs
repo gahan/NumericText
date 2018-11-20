@@ -16,8 +16,9 @@ namespace NumericText
             // Search for any numeric values in the passed string.
 
             // Date, Time, Phone numbers
+            // Currencies, percent, to the power of
 
-            sExtractionPattern = @"(?<fraction>[\-\+]?[0-9]{1,}[\\\/][0-9]{1,})|(?:[\-\+]?[0-9]{4,})(?:(?:\.[0-9]*)|(?<ordinal>st|nd|rd|th))?|(?:[\-\+]?[0-9]{1,3}(?:,[0-9]{3})*)(?:(?:\.[0-9]*)|(?<ordinal>st|nd|rd|th))?";
+            sExtractionPattern = @"(?<fraction>[\-\+]?[0-9]{1,}[\\\/][0-9]{1,})|(?:[\-\+]?[0-9]{4,})(?:(?:\.\d{1,})|(?<ordinal>st|nd|rd|th))?|(?:[\-\+]?[0-9]{1,3}(?:,[0-9]{3})*)(?:(?:\.\d{1,})|(?<ordinal>st|nd|rd|th))?";
 
             MatchCollection oMatches = Regex.Matches(sSource, sExtractionPattern);
 
