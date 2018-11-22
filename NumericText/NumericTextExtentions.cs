@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Newtonsoft.Json;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace NumericText
 {
@@ -86,9 +89,14 @@ namespace NumericText
         private static string ConvertToText(float fInput, bool bIgnoreZeroDecimals)
         {
             string sOutput = "";
-
+            JObject oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
 
             // [minus ] trillion[, ]billion[, ]million[, ]thousand[, ]hundred[ and ]tens/singles[point][digits]
+
+            IEnumerable<JToken> pricyProducts = oFormat["ordinals"].SelectTokens("$.[?(@..order == 1)]");
+
+
+
 
 
 
