@@ -6,7 +6,7 @@ namespace NumericText_Unit_Tests
     [TestClass]
     public class NumericTextUnitTests
     {
-        [TestMethod]
+        [TestMethod]    
         public void SimpleNumbers()
         {
             string lsTest = "";

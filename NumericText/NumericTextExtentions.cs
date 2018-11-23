@@ -75,26 +75,28 @@ namespace NumericText
 
         public static string ToNumericText(this string sSource)
         {
-            return ConvertToText(float.Parse(sSource), false);
+            return ConvertToText(decimal.Parse(sSource), false);
         }
         public static string ToNumericText(this int iSource)
         {
-            return ConvertToText((float)iSource, true);
+            return ConvertToText((decimal)iSource, true);
         }
-        public static string ToNumericText(this float fSource)
+        public static string ToNumericText(this decimal fSource)
         {
             return ConvertToText(fSource, false);
         }
 
-        private static string ConvertToText(float fInput, bool bIgnoreZeroDecimals)
+        private static string ConvertToText(decimal fInput, bool bIgnoreZeroDecimals)
         {
             string sOutput = "";
-            string sseparator = "";
+            string sForcedSeparator = "";
             string sTemp = "";
             bool bIsMinus = false;
             int iCounter = 1;
             FormatSection oSection;
             bool bLastSeparator = false;
+
+
 
             JObject oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
 
@@ -104,8 +106,15 @@ namespace NumericText
                 fInput *= -1;
             }
 
+
+
+            // var oTemp = JsonConvert.DeserializeObject<LanguageFormat>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+
+          //  IDictionary<string, NumberType> NumberTypes = JsonConvert.DeserializeObject<IDictionary<string, NumberType>>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+
+
             while (oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
-            {
+            {  
                 oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
                 iCounter++;
 
@@ -120,14 +129,31 @@ namespace NumericText
                             oSection.replacements.TryGetValue(sTemp, out sTemp);
                         }
 
-                        if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position == "start") { sOutput += oSection.separator.format; }
+                        if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position == "start") { sOutput += (string.IsNullOrEmpty(sForcedSeparator) ? oSection.separator.format : sForcedSeparator); }
                         sOutput += oSection.format.Replace("#", sTemp);
-                        if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position != "start") { sOutput += oSection.separator.format; }
+                        if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position != "start") { sOutput += (string.IsNullOrEmpty(sForcedSeparator) ? oSection.separator.format : sForcedSeparator); }
 
-                        if (oSection.separator != null) { bLastSeparator = oSection.separator.lastseparator; }
+                        if (oSection.separator != null) { bLastSeparator = oSection.separator.lastseparator; sForcedSeparator = oSection.separator.forceseparator; }
 
                         fInput %= oSection.divisor;
                     }
+                }
+
+                if (oSection.decimals)
+                {
+                    if (oSection.listdigits)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+                if (oSection.negatives)
+                {
+
                 }
             }
 
@@ -139,11 +165,12 @@ namespace NumericText
             return sOutput;
         }
 
-        public class separatorSection
+        public class SeparatorSection
         {
             public string format { get; set; }
             public string position { get; set; }
             public bool lastseparator { get; set; }
+            public string forceseparator { get; set; }
         }
 
         private class FormatSection
@@ -152,9 +179,38 @@ namespace NumericText
             public Int64 divisor { get; set; }
             public int order { get; set; }
             public bool listdigits { get; set; }
-            public separatorSection separator { get; set; }
+            public bool negatives { get; set; }
+            public bool decimals { get; set; }
+            public SeparatorSection separator { get; set; }
             public IDictionary<string, string> replacements { get; set; }
         }
 
+        private class OrdinalType
+        {
+            public FormatSection trillions { get; set; }
+            public FormatSection billions { get; set; }
+            public FormatSection millions { get; set; }
+            public FormatSection thousands { get; set; }
+            public FormatSection hundreds { get; set; }
+            public FormatSection tens { get; set; }
+            public FormatSection singles { get; set; }
+            public FormatSection decimals { get; set; }
+            public FormatSection negative { get; set; }
+        }
+
+        private class LanguageFormat
+        {
+            public OrdinalType ordinals { get; set; }
+        }
+
+        private class NumberPart
+        {
+            public IDictionary<string,FormatSection> FormatSections { get; set; }
+        }
+
+        private class NumberType
+        {
+            public IDictionary<string, NumberPart> NumberParts { get; set; }
+        }
     }
 }

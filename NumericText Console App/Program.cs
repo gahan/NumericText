@@ -11,8 +11,7 @@ namespace NumericText_Console_App
 
 
             Console.WriteLine(sInput);
-
-
+            Console.WriteLine("");
             Console.WriteLine(sInput.ToText());
 
 

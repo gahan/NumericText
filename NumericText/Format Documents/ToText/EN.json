@@ -50,7 +50,8 @@
       "separator": {
         "format": " and ",
         "position": "start",
-        "lastseparator": true
+        "lastseparator": false,
+        "forceseparator": "-"
       },
       "replacements": {
         "0": "",
@@ -99,14 +100,20 @@
       "order": 7
     },
     "decimals": {
-      "format": ".",
+      "decimals": true,
+      "format": " point #",
       "listdigits": true,
+      "separator": {
+        "format": ", ",
+        "position": "start"
+      },
       "order": 8
     },
     "negative": {
-      "format": "minus",
+      "negatives": true,
+      "format": "minus ",
       "position": "start",
-      "order":  9
+      "order": 9
     }
   }
 }
