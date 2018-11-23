@@ -2,7 +2,7 @@
   "ordinals": {
     "trillions": {
       "format": "# trillion",
-      "seperator": {
+      "separator": {
         "format": ", ",
         "position": "start"
       },
@@ -11,7 +11,7 @@
     },
     "billions": {
       "format": "# billion",
-      "seperator": {
+      "separator": {
         "format": ", ",
         "position": "start"
       },
@@ -20,7 +20,7 @@
     },
     "millions": {
       "format": "# million",
-      "seperator": {
+      "separator": {
         "format": ", ",
         "position": "start"
       },
@@ -29,7 +29,7 @@
     },
     "thousands": {
       "format": "# thousand",
-      "seperator": {
+      "separator": {
         "format": ", ",
         "position": "start"
       },
@@ -38,7 +38,7 @@
     },
     "hundreds": {
       "format": "# hundred",
-      "seperator": {
+      "separator": {
         "format": ", ",
         "position": "start"
       },
@@ -47,7 +47,7 @@
     },
     "tens": {
       "format": "#",
-      "seperator": {
+      "separator": {
         "format": " and ",
         "position": "start",
         "lastseparator": true
@@ -57,7 +57,7 @@
         "1": "",
         "2": "twenty",
         "3": "thirty",
-        "4": "fourty",
+        "4": "forty",
         "5": "fifty",
         "6": "sixty",
         "7": "seventy",
@@ -69,7 +69,7 @@
     },
     "singles": {
       "format": "#",
-      "seperator": {
+      "separator": {
         "format": " and ",
         "position": "start"
       },

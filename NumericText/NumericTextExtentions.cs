@@ -23,7 +23,7 @@ namespace NumericText
             string sExtractionPattern = "";
             List<MatchResult> MatchResults = new List<MatchResult>();
 
-            sSource = "This is a test to find the numbers:1, 101, 2222 or the negative numbers -2345, -44444.55 or -1,234.55 or ordinal numbers like 1st or 22nd or 66th or a number with thousands separators like 1,442,333 in this string. Fractions like 1/10, 3/8, 5/16 should also be located.  This sentence checks for a number at the end of a sentence like 3,244.";
+            //sSource = "This is a test to find the numbers:1, 101, 2222 or the negative numbers -2345, -44444.55 or -1,234.55 or ordinal numbers like 1st or 22nd or 66th or a number with thousands separators like 1,442,333 in this string. Fractions like 1/10, 3/8, 5/16 should also be located.  This sentence checks for a number at the end of a sentence like 3,244.";
 
             // Search for any numeric values in the passed string.
 
@@ -64,7 +64,7 @@ namespace NumericText
 
                 if (!mMatch.IsOrdinal && !mMatch.IsFraction)
                 {
-                    sSource = sSource.Replace(mMatch.Value, mMatch.Value.ToNumericText());
+                    sOutput = sOutput.Replace(mMatch.Value, mMatch.Value.ToNumericText());
                 }
             }
 
@@ -89,18 +89,72 @@ namespace NumericText
         private static string ConvertToText(float fInput, bool bIgnoreZeroDecimals)
         {
             string sOutput = "";
+            string sseparator = "";
+            string sTemp = "";
+            bool bIsMinus = false;
+            int iCounter = 1;
+            FormatSection oSection;
+            bool bLastSeparator = false;
+
             JObject oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
 
-            // [minus ] trillion[, ]billion[, ]million[, ]thousand[, ]hundred[ and ]tens/singles[point][digits]
+            if (fInput < 0)
+            {
+                bIsMinus = true;
+                fInput *= -1;
+            }
 
-            IEnumerable<JToken> pricyProducts = oFormat["ordinals"].SelectTokens("$.[?(@..order == 1)]");
+            while (oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
+            {
+                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
+                iCounter++;
 
+                if (oSection.divisor > 0)
+                {
+                    sTemp = Math.Truncate(fInput / oSection.divisor).ToString();
 
+                    if (sTemp != "0")
+                    {
+                        if (oSection.replacements != null)
+                        {
+                            oSection.replacements.TryGetValue(sTemp, out sTemp);
+                        }
 
+                        if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position == "start") { sOutput += oSection.separator.format; }
+                        sOutput += oSection.format.Replace("#", sTemp);
+                        if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position != "start") { sOutput += oSection.separator.format; }
 
+                        if (oSection.separator != null) { bLastSeparator = oSection.separator.lastseparator; }
 
+                        fInput %= oSection.divisor;
+                    }
+                }
+            }
+
+            if (Regex.IsMatch(sOutput, @"\d"))
+            {
+                sOutput = sOutput.ToText();
+            }
 
             return sOutput;
         }
+
+        public class separatorSection
+        {
+            public string format { get; set; }
+            public string position { get; set; }
+            public bool lastseparator { get; set; }
+        }
+
+        private class FormatSection
+        {
+            public string format { get; set; }
+            public Int64 divisor { get; set; }
+            public int order { get; set; }
+            public bool listdigits { get; set; }
+            public separatorSection separator { get; set; }
+            public IDictionary<string, string> replacements { get; set; }
+        }
+
     }
 }
