@@ -110,12 +110,12 @@ namespace NumericText
 
             // var oTemp = JsonConvert.DeserializeObject<LanguageFormat>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
 
-          //  IDictionary<string, NumberType> NumberTypes = JsonConvert.DeserializeObject<IDictionary<string, NumberType>>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+            //  IDictionary<string, NumberType> NumberTypes = JsonConvert.DeserializeObject<IDictionary<string, NumberType>>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
 
 
-            while (oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
-            {  
-                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
+            while (oFormat["cardinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
+            {
+                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["cardinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
                 iCounter++;
 
                 if (oSection.divisor > 0)
@@ -141,19 +141,39 @@ namespace NumericText
 
                 if (oSection.decimals)
                 {
-                    if (oSection.listdigits)
-                    {
+                    int iDecimals = (int)((fInput % 1) * (decimal)(Math.Pow(10, ((fInput % 1).ToString().Length - 2))));
 
-                    }
-                    else
+                    if (iDecimals > 0)
                     {
+                        sForcedSeparator = "";
+                        sTemp = "";
 
+                        if (!string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position == "start") { sOutput += (string.IsNullOrEmpty(sForcedSeparator) ? oSection.separator.format : sForcedSeparator); }
+
+                        if (oSection.listdigits)
+                        {
+                            for (int iLoop = 0; iLoop < iDecimals.ToString().Length; iLoop++)
+                            {
+                                sTemp += iDecimals.ToString().Substring(iLoop, 1) + " ";
+                            }
+
+                            sTemp = sTemp.Trim().ToText();
+                        }
+                        else
+                        {
+
+                        }
+
+                        sOutput += oSection.format.Replace("#", sTemp);
+                        if (!string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position != "start") { sOutput += (string.IsNullOrEmpty(sForcedSeparator) ? oSection.separator.format : sForcedSeparator); }
                     }
                 }
 
-                if (oSection.negatives)
+                if (oSection.negatives && bIsMinus)
                 {
-
+                    sTemp = "";
+                    if (oSection.position == "start") { sOutput = oSection.format + sOutput; }
+                    if (oSection.position != "start") { sOutput += oSection.format; }
                 }
             }
 
@@ -181,11 +201,12 @@ namespace NumericText
             public bool listdigits { get; set; }
             public bool negatives { get; set; }
             public bool decimals { get; set; }
+            public string position { get; set; }
             public SeparatorSection separator { get; set; }
             public IDictionary<string, string> replacements { get; set; }
         }
 
-        private class OrdinalType
+        private class CardinalType
         {
             public FormatSection trillions { get; set; }
             public FormatSection billions { get; set; }
@@ -200,12 +221,12 @@ namespace NumericText
 
         private class LanguageFormat
         {
-            public OrdinalType ordinals { get; set; }
+            public CardinalType cardinals { get; set; }
         }
 
         private class NumberPart
         {
-            public IDictionary<string,FormatSection> FormatSections { get; set; }
+            public IDictionary<string, FormatSection> FormatSections { get; set; }
         }
 
         private class NumberType

@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <None Update="Format Documents\ToText\EN.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 ﻿{
-  "ordinals": {
+  "cardinals": {
     "trillions": {
       "format": "# trillion",
       "separator": {
@@ -101,13 +101,143 @@
     },
     "decimals": {
       "decimals": true,
-      "format": " point #",
+      "format": "#",
       "listdigits": true,
+      "separator": {
+        "format": " point ",
+        "position": "start"
+      },
+      "order": 8
+    },
+    "negative": {
+      "negatives": true,
+      "format": "minus ",
+      "position": "start",
+      "order": 9
+    }
+  },
+
+  "ordinals": {
+    "trillions": {
+      "format": "# trillion",
       "separator": {
         "format": ", ",
         "position": "start"
       },
-      "order": 8
+      "lastpart": {
+        "format": "th",
+        "position": "end"
+      },
+      "divisor": 1000000000000,
+      "order": 1
+    },
+    "billions": {
+      "format": "# billion",
+      "separator": {
+        "format": ", ",
+        "position": "start"
+      },
+      "lastpart": {
+        "format": "th",
+        "position": "end"
+      },
+      "divisor": 1000000000,
+      "order": 2
+    },
+    "millions": {
+      "format": "# million",
+      "separator": {
+        "format": ", ",
+        "position": "start"
+      },
+      "lastpart": {
+        "format": "th",
+        "position": "end"
+      },
+      "divisor": 1000000,
+      "order": 3
+    },
+    "thousands": {
+      "format": "# thousand",
+      "separator": {
+        "format": ", ",
+        "position": "start"
+      },
+      "lastpart": {
+        "format": "th",
+        "position": "end"
+      },
+      "divisor": 1000,
+      "order": 4
+    },
+    "hundreds": {
+      "format": "# hundred",
+      "separator": {
+        "format": ", ",
+        "position": "start"
+      },
+      "lastpart": {
+        "format": "th",
+        "position": "end"
+      },
+      "divisor": 100,
+      "order": 5
+    },
+    "tens": {
+      "format": "#",
+      "separator": {
+        "format": " and ",
+        "position": "start",
+        "lastseparator": false,
+        "forceseparator": "-"
+      },
+      "replacements": {
+        "0": "",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": "",
+        "7": "",
+        "8": "",
+        "9": ""
+      },
+      "divisor": 10,
+      "order": 6
+    },
+    "singles": {
+      "format": "#",
+      "separator": {
+        "format": " and ",
+        "position": "start"
+      },
+      "replacements": {
+        "0": "zeroth",
+        "1": "first",
+        "2": "second",
+        "3": "third",
+        "4": "fourth",
+        "5": "fifth",
+        "6": "sixth",
+        "7": "seventh",
+        "8": "eighth",
+        "9": "ninth",
+        "10": "tenth",
+        "11": "eleventh",
+        "12": "twelveth",
+        "13": "thirteenth",
+        "14": "fourteenth",
+        "15": "fifteenth",
+        "16": "sixteenth",
+        "17": "seventeenth",
+        "18": "eighteenth",
+        "19": "ninteenth",
+        "20": "twentieth",
+        "21": "twenty-first",
+      },
+      "divisor": 1,
+      "order": 7
     },
     "negative": {
       "negatives": true,
