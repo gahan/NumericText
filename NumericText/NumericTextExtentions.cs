@@ -10,6 +10,8 @@ namespace NumericText
 {
     public static class NumericTextExtentions
     {
+        private static JObject oFormat;
+
         private class MatchResult
         {
             public string Value { get; set; }
@@ -60,6 +62,7 @@ namespace NumericText
 
                 if (mMatch.IsOrdinal)
                 {
+                    //sOutput = sOutput.Replace(mMatch.Value, mMatch.Value.ToOrdinalText());
                 }
 
                 if (!mMatch.IsOrdinal && !mMatch.IsFraction)
@@ -75,18 +78,49 @@ namespace NumericText
 
         public static string ToNumericText(this string sSource)
         {
-            return ConvertToText(decimal.Parse(sSource), false);
+            return ConvertToText("cardinals",decimal.Parse(sSource), false);
         }
         public static string ToNumericText(this int iSource)
         {
-            return ConvertToText((decimal)iSource, true);
+            return ConvertToText("cardinals", (decimal)iSource, true);
         }
         public static string ToNumericText(this decimal fSource)
         {
-            return ConvertToText(fSource, false);
+            return ConvertToText("cardinals", fSource, false);
         }
 
-        private static string ConvertToText(decimal fInput, bool bIgnoreZeroDecimals)
+        public static string ToOrdinalText(this string sSource)
+        {
+            return ConvertToOrdinalText(int.Parse(sSource));
+        }
+        public static string ToOrdinalText(this int iSource)
+        {
+            return ConvertToOrdinalText(iSource);
+        }
+        public static string ToOrdinalText(this decimal fSource)
+        {
+            return ConvertToOrdinalText((int)fSource);
+        }
+
+        private static string ConvertToOrdinalText(int fInput)
+        {
+            string sOutput = "";
+
+            // Extract out the lowest remainder and convert that to an ordinal
+
+
+            // Subtract the lowest remainder from the original number
+
+
+            // Convert the higher order numbers to cardinal representations
+
+
+
+
+            return sOutput;
+        }
+
+        private static string ConvertToText(string sSection, decimal fInput, bool bIgnoreZeroDecimals)
         {
             string sOutput = "";
             string sForcedSeparator = "";
@@ -96,9 +130,10 @@ namespace NumericText
             FormatSection oSection;
             bool bLastSeparator = false;
 
-
-
-            JObject oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+            if (oFormat == null)
+            {
+                oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+            }
 
             if (fInput < 0)
             {
@@ -113,9 +148,9 @@ namespace NumericText
             //  IDictionary<string, NumberType> NumberTypes = JsonConvert.DeserializeObject<IDictionary<string, NumberType>>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
 
 
-            while (oFormat["cardinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
+            while (oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
             {
-                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["cardinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
+                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
                 iCounter++;
 
                 if (oSection.divisor > 0)
