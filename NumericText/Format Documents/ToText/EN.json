@@ -119,66 +119,46 @@
 
   "ordinals": {
     "trillions": {
-      "format": "# trillion",
+      "format": "# trillionth",
       "separator": {
         "format": ", ",
         "position": "start"
-      },
-      "lastpart": {
-        "format": "th",
-        "position": "end"
       },
       "divisor": 1000000000000,
       "order": 1
     },
     "billions": {
-      "format": "# billion",
+      "format": "# billionth",
       "separator": {
         "format": ", ",
         "position": "start"
-      },
-      "lastpart": {
-        "format": "th",
-        "position": "end"
       },
       "divisor": 1000000000,
       "order": 2
     },
     "millions": {
-      "format": "# million",
+      "format": "# millionth",
       "separator": {
         "format": ", ",
         "position": "start"
-      },
-      "lastpart": {
-        "format": "th",
-        "position": "end"
       },
       "divisor": 1000000,
       "order": 3
     },
     "thousands": {
-      "format": "# thousand",
+      "format": "# thousandth",
       "separator": {
         "format": ", ",
         "position": "start"
-      },
-      "lastpart": {
-        "format": "th",
-        "position": "end"
       },
       "divisor": 1000,
       "order": 4
     },
     "hundreds": {
-      "format": "# hundred",
+      "format": "# hundredth",
       "separator": {
         "format": ", ",
         "position": "start"
-      },
-      "lastpart": {
-        "format": "th",
-        "position": "end"
       },
       "divisor": 100,
       "order": 5

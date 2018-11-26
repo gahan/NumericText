@@ -62,7 +62,7 @@ namespace NumericText
 
                 if (mMatch.IsOrdinal)
                 {
-                    //sOutput = sOutput.Replace(mMatch.Value, mMatch.Value.ToOrdinalText());
+                    sOutput = sOutput.Replace(mMatch.Value, mMatch.Value.ToOrdinalText());
                 }
 
                 if (!mMatch.IsOrdinal && !mMatch.IsFraction)
@@ -91,7 +91,7 @@ namespace NumericText
 
         public static string ToOrdinalText(this string sSource)
         {
-            return ConvertToOrdinalText(int.Parse(sSource));
+            return ConvertToOrdinalText(long.Parse(Regex.Replace(sSource, "[^.0-9]", "")));
         }
         public static string ToOrdinalText(this int iSource)
         {
@@ -99,19 +99,60 @@ namespace NumericText
         }
         public static string ToOrdinalText(this decimal fSource)
         {
-            return ConvertToOrdinalText((int)fSource);
+            return ConvertToOrdinalText((long)fSource);
         }
 
-        private static string ConvertToOrdinalText(int fInput)
+        private static string ConvertToOrdinalText(long fInput)
         {
             string sOutput = "";
+            string sForcedSeparator = "";
+            string sTemp = "";
+            bool bIsMinus = false;
+            int iCounter = 1;
+            FormatSection oSection;
+            bool bLastSeparator = false;
+
+            int iLastSection = 0;
+            long llastDivisor = 0;
+            long lFinalAmount = 0;
+            long lOriginalAmount = fInput;
+
+            if (oFormat == null)
+            {
+                oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+            }
+
+            if (fInput < 0)
+            {
+                bIsMinus = true;
+                fInput *= -1;
+            }
 
             // Extract out the lowest remainder and convert that to an ordinal
-            
-            
+
+            while (oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
+            {
+                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
+                iCounter++;
+
+                if (oSection.divisor > 0)
+                {
+                    if (Math.Truncate((decimal)(fInput / oSection.divisor)) > 0 && fInput % oSection.divisor == 0)
+                    {
+                        iLastSection = iCounter-1;
+                        llastDivisor = oSection.divisor;
+                        lFinalAmount = (long)Math.Truncate((decimal)(fInput / oSection.divisor));
+                    }
+                    else
+                    {
+                        fInput %= oSection.divisor;
+                    }
+                }
+            }
 
             // Subtract the lowest remainder from the original number
 
+            lOriginalAmount -= lFinalAmount;
 
             // Convert the higher order numbers to cardinal representations
 
