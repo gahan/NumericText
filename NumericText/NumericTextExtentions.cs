@@ -107,8 +107,9 @@ namespace NumericText
             string sOutput = "";
 
             // Extract out the lowest remainder and convert that to an ordinal
+            
+            
 
-xx
             // Subtract the lowest remainder from the original number
 
 
