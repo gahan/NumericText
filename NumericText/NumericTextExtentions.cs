@@ -111,6 +111,7 @@ namespace NumericText
             int iCounter = 1;
             FormatSection oSection;
             bool bLastSeparator = false;
+            JObject xSection;
 
             if (oFormat == null)
             {
@@ -123,15 +124,10 @@ namespace NumericText
                 fInput *= -1;
             }
 
-
-
-            // var oTemp = JsonConvert.DeserializeObject<LanguageFormat>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
-
-            //  IDictionary<string, NumberType> NumberTypes = JsonConvert.DeserializeObject<IDictionary<string, NumberType>>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
-
-
             while (oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
             {
+                xSection = JObject.Parse(oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
+
                 oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
                 iCounter++;
 
