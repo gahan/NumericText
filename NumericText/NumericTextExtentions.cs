@@ -88,83 +88,23 @@ namespace NumericText
         {
             return ConvertToText("cardinals", fSource, false);
         }
-
         public static string ToOrdinalText(this string sSource)
         {
-            return ConvertToOrdinalText(long.Parse(Regex.Replace(sSource, "[^.0-9]", "")));
+            return ConvertToText("ordinals", long.Parse(Regex.Replace(sSource, "[^.0-9]", "")), true);
         }
         public static string ToOrdinalText(this int iSource)
         {
-            return ConvertToOrdinalText(iSource);
+            return ConvertToText("ordinals", iSource, true);
         }
         public static string ToOrdinalText(this decimal fSource)
         {
-            return ConvertToOrdinalText((long)fSource);
-        }
-
-        private static string ConvertToOrdinalText(long fInput)
-        {
-            string sOutput = "";
-            string sForcedSeparator = "";
-            string sTemp = "";
-            bool bIsMinus = false;
-            int iCounter = 1;
-            FormatSection oSection;
-            bool bLastSeparator = false;
-
-            int iLastSection = 0;
-            long llastDivisor = 0;
-            long lFinalAmount = 0;
-            long lOriginalAmount = fInput;
-
-            if (oFormat == null)
-            {
-                oFormat = JObject.Parse(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
-            }
-
-            if (fInput < 0)
-            {
-                bIsMinus = true;
-                fInput *= -1;
-            }
-
-            // Extract out the lowest remainder and convert that to an ordinal
-
-            while (oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
-            {
-                oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat["ordinals"].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
-                iCounter++;
-
-                if (oSection.divisor > 0)
-                {
-                    if (Math.Truncate((decimal)(fInput / oSection.divisor)) > 0 && fInput % oSection.divisor == 0)
-                    {
-                        iLastSection = iCounter-1;
-                        llastDivisor = oSection.divisor;
-                        lFinalAmount = (long)Math.Truncate((decimal)(fInput / oSection.divisor));
-                    }
-                    else
-                    {
-                        fInput %= oSection.divisor;
-                    }
-                }
-            }
-
-            // Subtract the lowest remainder from the original number
-
-            lOriginalAmount -= lFinalAmount;
-
-            // Convert the higher order numbers to cardinal representations
-
-
-
-
-            return sOutput;
+            return ConvertToText("ordinals", (long)fSource, true);
         }
 
         private static string ConvertToText(string sSection, decimal fInput, bool bIgnoreZeroDecimals)
         {
             string sOutput = "";
+            string sFormat = "";
             string sForcedSeparator = "";
             string sTemp = "";
             bool bIsMinus = false;
@@ -198,16 +138,33 @@ namespace NumericText
                 if (oSection.divisor > 0)
                 {
                     sTemp = Math.Truncate(fInput / oSection.divisor).ToString();
+                    sFormat = oSection.format;
 
                     if (sTemp != "0")
                     {
-                        if (oSection.replacements != null)
+                        if (oSection.lastitem != null && fInput % oSection.divisor == 0)
                         {
-                            oSection.replacements.TryGetValue(sTemp, out sTemp);
+                            if (oSection.lastitem.format != null)
+                            {
+                                sFormat = oSection.lastitem.format;
+                            }
+
+                            if (oSection.lastitem.replacements != null)
+                            {
+                                oSection.lastitem.replacements.TryGetValue(sTemp, out sTemp);
+                            }
+                        }
+                        else
+                        {
+                            if (oSection.replacements != null)
+                            {
+                                oSection.replacements.TryGetValue(sTemp, out sTemp);
+                            }
                         }
 
+
                         if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position == "start") { sOutput += (string.IsNullOrEmpty(sForcedSeparator) ? oSection.separator.format : sForcedSeparator); }
-                        sOutput += oSection.format.Replace("#", sTemp);
+                        sOutput += sFormat.Replace("#", sTemp);
                         if (!bLastSeparator && !string.IsNullOrEmpty(sOutput) && oSection.separator != null && oSection.separator.position != "start") { sOutput += (string.IsNullOrEmpty(sForcedSeparator) ? oSection.separator.format : sForcedSeparator); }
 
                         if (oSection.separator != null) { bLastSeparator = oSection.separator.lastseparator; sForcedSeparator = oSection.separator.forceseparator; }
@@ -262,6 +219,13 @@ namespace NumericText
             return sOutput;
         }
 
+        public class LastItemSection
+        {
+            public string format { get; set; }
+            public string position { get; set; }
+            public IDictionary<string, string> replacements { get; set; }
+        }
+
         public class SeparatorSection
         {
             public string format { get; set; }
@@ -280,10 +244,11 @@ namespace NumericText
             public bool decimals { get; set; }
             public string position { get; set; }
             public SeparatorSection separator { get; set; }
+            public LastItemSection lastitem { get; set; }
             public IDictionary<string, string> replacements { get; set; }
         }
 
-        private class CardinalType
+        private class NumberParts
         {
             public FormatSection trillions { get; set; }
             public FormatSection billions { get; set; }
@@ -298,7 +263,8 @@ namespace NumericText
 
         private class LanguageFormat
         {
-            public CardinalType cardinals { get; set; }
+            public NumberParts cardinals { get; set; }
+            public NumberParts ordinals { get; set; }
         }
 
         private class NumberPart

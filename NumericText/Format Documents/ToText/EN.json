@@ -119,46 +119,61 @@
 
   "ordinals": {
     "trillions": {
-      "format": "# trillionth",
+      "format": "# trillion",
       "separator": {
         "format": ", ",
         "position": "start"
+      },
+      "lastitem": {
+        "format": "# trillionth"
       },
       "divisor": 1000000000000,
       "order": 1
     },
     "billions": {
-      "format": "# billionth",
+      "format": "# billion",
       "separator": {
         "format": ", ",
         "position": "start"
+      },
+      "lastitem": {
+        "format": "# billionth"
       },
       "divisor": 1000000000,
       "order": 2
     },
     "millions": {
-      "format": "# millionth",
+      "format": "# million",
       "separator": {
         "format": ", ",
         "position": "start"
+      },
+      "lastitem": {
+        "format": "# millionth"
       },
       "divisor": 1000000,
       "order": 3
     },
     "thousands": {
-      "format": "# thousandth",
+      "format": "# thousand",
       "separator": {
         "format": ", ",
         "position": "start"
+      },
+      "lastitem": {
+        "format": "# thousandth"
       },
       "divisor": 1000,
       "order": 4
     },
     "hundreds": {
-      "format": "# hundredth",
+      "format": "# hundred",
       "separator": {
         "format": ", ",
         "position": "start"
+      },
+      "lastitem": {
+        "format": "# hundredth"
       },
       "divisor": 100,
       "order": 5
@@ -174,14 +189,29 @@
       "replacements": {
         "0": "",
         "1": "",
-        "2": "",
-        "3": "",
-        "4": "",
-        "5": "",
-        "6": "",
-        "7": "",
-        "8": "",
-        "9": ""
+        "2": "twenty",
+        "3": "thirty",
+        "4": "forty",
+        "5": "fifty",
+        "6": "sixty",
+        "7": "seventy",
+        "8": "eighty",
+        "9": "ninty"
+      },
+      "lastitem": {
+        "format": "#",
+        "replacements": {
+          "0": "",
+          "1": "tenth",
+          "2": "twentieth",
+          "3": "thirtieth",
+          "4": "fortieth",
+          "5": "fiftieth",
+          "6": "sixtieth",
+          "7": "seventieth",
+          "8": "eightieth",
+          "9": "nintieth"
+        }
       },
       "divisor": 10,
       "order": 6
@@ -212,9 +242,7 @@
         "16": "sixteenth",
         "17": "seventeenth",
         "18": "eighteenth",
-        "19": "ninteenth",
-        "20": "twentieth",
-        "21": "twenty-first"
+        "19": "ninteenth"
       },
       "divisor": 1,
       "order": 7
