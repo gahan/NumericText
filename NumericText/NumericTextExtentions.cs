@@ -101,6 +101,11 @@ namespace NumericText
             return ConvertToText("ordinals", (long)fSource, true);
         }
 
+        public static string ToFractionText(this string sSource)
+        {
+             return ConvertToText("ordinals", long.Parse(Regex.Replace(sSource, "[^.0-9]", "")), true);
+        }
+
         private static string ConvertToText(string sSection, decimal fInput, bool bIgnoreZeroDecimals)
         {
             string sOutput = "";
@@ -111,7 +116,6 @@ namespace NumericText
             int iCounter = 1;
             FormatSection oSection;
             bool bLastSeparator = false;
-            JObject xSection;
 
             if (oFormat == null)
             {
@@ -124,10 +128,15 @@ namespace NumericText
                 fInput *= -1;
             }
 
+
+
+            // var oTemp = JsonConvert.DeserializeObject<LanguageFormat>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+
+            //  IDictionary<string, NumberType> NumberTypes = JsonConvert.DeserializeObject<IDictionary<string, NumberType>>(File.ReadAllText(@"C:\Development\Open Source\NumericText\NumericText\Format Documents\ToText\EN.json"));
+
+
             while (oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").Count() > 0)
             {
-                xSection = JObject.Parse(oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
-
                 oSection = JsonConvert.DeserializeObject<FormatSection>(oFormat[sSection].SelectTokens("$.[?(@..order == " + iCounter.ToString() + ")]").First().First().ToString());
                 iCounter++;
 
